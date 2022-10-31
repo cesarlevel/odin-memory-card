@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, provide } from 'vue'
+import { reactive } from 'vue'
 import Cards from './components/Cards.vue'
 import type { Card, State } from './types'
 
@@ -44,7 +44,20 @@ const state: State = reactive({
   lastCard: '',
 })
 
-provide('state', state);
+function test(card: any) {
+  if (state.lastCard === '') {
+    state.lastCard = card.value;
+    state.currentScore += 1;
+  } else if (state.lastCard === card.value) {
+    state.currentScore += 1;
+  } else {
+    if (state.currentScore > state.bestScore) {
+      state.bestScore = state.currentScore
+    }
+    state.currentScore = 0;
+    state.lastCard = ''
+  }
+}
 
 </script>
 
@@ -53,5 +66,5 @@ provide('state', state);
     <p>Current score: {{state.currentScore}}</p>
     <p>Best score: {{state.bestScore}}</p>
   </div>
-  <Cards :cards="cards" :index="state.currentScore"></Cards>
+  <Cards :cards="cards" :index="state.currentScore" @update="test"></Cards>
 </template>
